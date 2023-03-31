@@ -129,24 +129,26 @@ class _FindYourFeatScreenState extends State<FindYourFeatScreen> {
               children: [
                 const SizedBox(height: 6),
                 Padding(
-                  padding: const EdgeInsets.only(top: 100),
-                  child: Text(
-                    Song.songs[currentSongIndex].title,
-                    style: const TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                  padding: const EdgeInsets.only(top: 500),
+                  child: Container(
+                    child: Text(
+                      Song.songs[currentSongIndex].title,
+                      style: const TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   Song.songs[currentSongIndex].description,
                   style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      color: Colors.white),
                 ),
-                const SizedBox(height: 200),
+                const SizedBox(height: 80),
                 Container(
                   margin: const EdgeInsets.only(left: 20.0, right: 20.0),
                   child: Row(
@@ -154,12 +156,22 @@ class _FindYourFeatScreenState extends State<FindYourFeatScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: IconButton(
-                          onPressed: dislikeSong,
-                          icon: const Icon(
-                            Icons.thumb_down,
-                            size: 50,
-                            color: Colors.red,
+                        child: Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: IconButton(
+                              onPressed: dislikeSong,
+                              icon: const Icon(
+                                Icons.thumb_down,
+                                size: 35,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -173,12 +185,22 @@ class _FindYourFeatScreenState extends State<FindYourFeatScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: IconButton(
-                          onPressed: superLikeSong,
-                          icon: const Icon(
-                            Icons.favorite,
-                            color: Colors.green,
-                            size: 50,
+                        child: Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: IconButton(
+                              onPressed: superLikeSong,
+                              icon: const Icon(
+                                Icons.favorite,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -191,12 +213,22 @@ class _FindYourFeatScreenState extends State<FindYourFeatScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: IconButton(
-                          onPressed: likeSong,
-                          icon: const Icon(
-                            Icons.thumb_up,
-                            color: Colors.blue,
-                            size: 50,
+                        child: Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: IconButton(
+                              onPressed: likeSong,
+                              icon: const Icon(
+                                Icons.thumb_up,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                            ),
                           ),
                         ),
                       ),

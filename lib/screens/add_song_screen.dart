@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 import '../models/song_model.dart';
 
@@ -15,14 +19,34 @@ class _AddSongFormState extends State<AddSongForm> {
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav', 'ogg'],
     );
 
     if (result != null) {
-      setState(() {
-        filePath = result.files.single.path;
+      setState(() async {
+        final String? copiedFilePath =
+            await _copyAudioFile(result.files.single.path!);
+        filePath = copiedFilePath;
       });
     }
+  }
+
+  // copier la musique ajouter par l'utilisateur
+  // le répertoire de stockage de l'application en utilisant la méthode getApplicationDocumentsDirectory()
+  // a bibliothèque path pour extraire le nom du fichier audio à partir de son chemin source,
+  //copier le fichier source vers le fichier de destination en utilisant la méthode copy() de la bibliothèque dart:io, et nous renvoyons le chemin de destination.
+  Future<String?> _copyAudioFile(String sourceFilePath) async {
+    final Directory? appDir = await getApplicationDocumentsDirectory();
+    if (appDir == null) {
+      return null;
+    }
+    final String fileName = path.basename(sourceFilePath);
+    final String destFilePath = path.join(appDir.path, fileName);
+    final File sourceFile = File(sourceFilePath);
+    final File destFile = File(destFilePath);
+    await sourceFile.copy(destFilePath);
+    return destFile.path;
   }
 
   void _addSong() {
@@ -100,48 +124,56 @@ class _AddSongFormState extends State<AddSongForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Ajouter une musique',
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ElevatedButton.icon(
-                onPressed: _pickFile,
-                icon: Icon(Icons.music_note),
-                label: Text('Choisir une musique'),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(
-                  labelText: 'Titre',
-                ),
-                style: TextStyle(color: Colors.black),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                ),
-                style: TextStyle(color: Colors.black),
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _addSong,
-                child: Text('Ajouter la musique'),
-              ),
-            ],
+    return Container(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            'Ajouter une musique',
           ),
+          titleTextStyle: TextStyle(color: Colors.black),
+        ),
+        body: Stack(
+          children: [
+            _BackgroundFilter(),
+            SingleChildScrollView(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _pickFile,
+                      icon: Icon(Icons.music_note),
+                      label: Text('Choisir une musique'),
+                    ),
+                    SizedBox(height: 16.0),
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        labelText: 'Titre',
+                      ),
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    SizedBox(height: 16.0),
+                    TextField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(
+                        labelText: 'Description',
+                      ),
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _addSong,
+                      child: Text('Ajouter la musique'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -161,9 +193,9 @@ class _BackgroundFilter extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.white,
-              Colors.white.withOpacity(0.5),
-              Colors.white.withOpacity(0.0),
+              Colors.deepPurple,
+              Colors.deepPurple.shade600.withOpacity(0.0),
+              Colors.deepPurple.shade100.withOpacity(0.0),
             ],
             stops: const [
               0.0,

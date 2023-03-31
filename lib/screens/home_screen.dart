@@ -245,9 +245,9 @@ class _CustomNavBarState extends State<_CustomNavBar> {
       },
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
+            icon: Icon(Icons.home),
+            label: 'Home',
+            backgroundColor: Colors.white),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite_outline),
           label: 'Favourites',
@@ -292,7 +292,7 @@ class _CustomAppBar extends StatelessWidget with PreferredSizeWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
+                builder: (context) => LoginPage(),
               ),
             );
           },
