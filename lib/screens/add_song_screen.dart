@@ -45,6 +45,8 @@ class _AddSongFormState extends State<AddSongForm> {
     final String destFilePath = path.join(appDir.path, fileName);
     final File sourceFile = File(sourceFilePath);
     final File destFile = File(destFilePath);
+
+    print(destFile);
     await sourceFile.copy(destFilePath);
     return destFile.path;
   }

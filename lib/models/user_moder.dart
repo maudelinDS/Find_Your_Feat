@@ -5,8 +5,9 @@ class UserModel extends ChangeNotifier {
 
   String? get loggedInUsername => _loggedInUsername;
 
-  set loggedInUsername(String? value) {
-    _loggedInUsername = value;
+  set loggedInUsername(String? username) {
+    _loggedInUsername = username;
+
     notifyListeners();
   }
 }

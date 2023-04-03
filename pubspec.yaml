@@ -34,7 +34,7 @@ dependencies:
   flutter_form_builder: 7.0.0-alpha.0
   audioplayer: 0.8.1
   file_picker: ^4.0.0
-
+  uuid: ^3.0.4
 
 
 

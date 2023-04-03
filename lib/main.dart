@@ -4,6 +4,7 @@ import 'package:my_app/models/user_moder.dart';
 import 'package:my_app/screens/add_song_screen.dart';
 import 'package:my_app/screens/find_your_feat_screen.dart';
 import 'package:my_app/screens/home_screen.dart';
+import 'package:my_app/screens/login_screen.dart';
 import 'package:my_app/screens/playlist_screen.dart';
 import 'package:my_app/screens/song_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,12 +33,13 @@ class MyApp extends StatelessWidget {
               displayColor: Colors.white,
             ),
       ),
-      home: const HomeScreen(),
+      home: LoginPage(),
       getPages: [
-        GetPage(name: '/', page: () => const HomeScreen()),
+        GetPage(name: '/home', page: () => const HomeScreen()),
         GetPage(name: '/song', page: () => const SongScreen()),
         GetPage(name: '/playlist', page: () => const PlaylistScreen()),
         GetPage(name: '/add_Song', page: () => AddSongForm()),
+        GetPage(name: '/login', page: () => LoginPage()),
         GetPage(
           name: '/find_your_feat',
           page: () => const FindYourFeatScreen(),

@@ -2,19 +2,11 @@ import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/screens/register_screen.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/user_moder.dart';
 import 'account_screen.dart';
-
-class UserModel extends ChangeNotifier {
-  String? _loggedInUsername;
-
-  String? get loggedInUsername => _loggedInUsername;
-
-  set loggedInUsername(String? value) {
-    _loggedInUsername = value;
-    notifyListeners();
-  }
-}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -33,6 +25,12 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _connect();
+    // retrieve the user's information
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        _loggedInUsername = prefs.getString('loggedInUsername');
+      });
+    });
   }
 
   @override
@@ -89,8 +87,13 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.push(
-          context,
+
+        UserModel userModel = Provider.of<UserModel>(context, listen: false);
+        userModel.loggedInUsername = _loggedInUsername;
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('loggedInUsername', _loggedInUsername!);
+
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => UserScreen(
               userData: {
@@ -128,6 +131,31 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> _goToUserScreen(String username) async {
+    final result = await _connection.query(
+      "SELECT * FROM users WHERE username = ?",
+      [username],
+    );
+
+    if (result.isNotEmpty) {
+      final user = result.first;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserScreen(
+            userData: {
+              'id': user['id'],
+              'username': user['username'],
+              'email': user['email'],
+              'mot_de_passe': user['mot_de_passe'],
+              'creation_date': user['creation_date'],
+            },
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,18 +163,23 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         title: const Text("Login"),
-        actions: _loggedInUsername != null
-            ? [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 36.0, vertical: 10),
-                  child: Text(
-                    _loggedInUsername!,
-                    style: TextStyle(color: Colors.white, fontSize: 25),
-                  ),
-                )
-              ]
-            : null,
+        actions: [
+          Text(
+            _loggedInUsername == null
+                ? "Not logged in"
+                : " ${_loggedInUsername!}",
+            style: const TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(width: 16),
+          if (_loggedInUsername != null)
+            InkWell(
+              child: Text(
+                _loggedInUsername!,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              onTap: () => _goToUserScreen(_loggedInUsername!),
+            )
+        ],
       ),
       body: Stack(
         children: [
