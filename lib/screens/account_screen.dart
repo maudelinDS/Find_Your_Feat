@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/user_moder.dart';
+import '../models/user_model.dart';
 
 class UserScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -15,6 +15,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   String? _loggedInUsername;
+  String? _musicData;
 
   @override
   void initState() {
@@ -25,20 +26,29 @@ class _UserScreenState extends State<UserScreen> {
   Future<void> _loadLoggedInUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? username = prefs.getString('loggedInUsername');
+    String? musicData = prefs.getString('musicData');
     UserModel userModel = Provider.of<UserModel>(context, listen: false);
     userModel.loggedInUsername = username;
     setState(() {
       _loggedInUsername = username;
+      _musicData = musicData;
     });
+  }
+
+  Future<void> _saveMusicData(String data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('musicData', data);
   }
 
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('loggedInUsername');
+    await prefs.remove('loggedInUsername');
+    await prefs.remove('musicData');
     UserModel userModel = Provider.of<UserModel>(context, listen: false);
     userModel.loggedInUsername = null;
     setState(() {
       _loggedInUsername = null;
+      _musicData = null;
     });
     Navigator.pushReplacementNamed(context, '/login');
   }
@@ -50,15 +60,21 @@ class _UserScreenState extends State<UserScreen> {
         backgroundColor: Colors.deepPurple,
         title: Text('Profile Page: ${widget.userData['username']}'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: _logout,
-          ),
           ElevatedButton(
             onPressed: () {
               Navigator.pushNamed(context, '/home');
             },
-            child: Text('Other Page'),
+            child: Text('Home'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.deepPurple),
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
           ),
         ],
       ),

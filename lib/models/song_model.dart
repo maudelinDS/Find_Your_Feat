@@ -1,4 +1,5 @@
 class Song {
+  final String id;
   final String title;
   final String description;
   final String url;
@@ -8,6 +9,7 @@ class Song {
   int superlike;
 
   Song({
+    required this.id,
     required this.title,
     required this.description,
     required this.url,
@@ -19,6 +21,7 @@ class Song {
 
   static List<Song> songs = [
     Song(
+      id: '1',
       title: 'Instru regeatton ',
       description: 'Mds',
       url: 'assets/music/mds-regeatton-deogo.mp3',
@@ -28,6 +31,7 @@ class Song {
       superlike: 0,
     ),
     Song(
+      id: '2',
       title: "coeur d'étranger",
       description: "coeur d'étranger",
       url: 'assets/music/Mele-Coeur-d_etranger-2.mp3',
@@ -38,6 +42,7 @@ class Song {
       superlike: 0,
     ),
     Song(
+      id: '3',
       title: 'Mds Beat Guitare',
       description: 'Mds Beat Guitare',
       url: 'assets/music/Mds-type-beat-guiatre-bpm-158-08.01.2023.mp3',
@@ -47,6 +52,7 @@ class Song {
       superlike: 0,
     ),
     Song(
+      id: '4',
       title: 'Pronto',
       description: 'Nero',
       url: 'assets/music/Nero-Pronto.mp3',

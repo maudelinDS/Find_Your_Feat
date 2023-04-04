@@ -108,9 +108,12 @@ class _FindYourFeatScreenState extends State<FindYourFeatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.deepPurple.withOpacity(0.5),
         elevation: 0,
-        title: const Text('Find Your Feat'),
+        title: const Text(
+          'Find Your Feat',
+          style: TextStyle(fontSize: 20),
+        ),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(

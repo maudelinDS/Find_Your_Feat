@@ -5,7 +5,7 @@ import 'package:mysql1/mysql1.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/user_moder.dart';
+import '../models/user_model.dart';
 import 'account_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -162,7 +162,10 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: const Text("Login"),
+        title: const Text(
+          "Login",
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
         actions: [
           Text(
             _loggedInUsername == null

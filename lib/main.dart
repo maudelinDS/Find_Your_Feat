@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_app/models/user_moder.dart';
+import 'package:my_app/models/user_model.dart';
 import 'package:my_app/screens/add_song_screen.dart';
 import 'package:my_app/screens/find_your_feat_screen.dart';
 import 'package:my_app/screens/home_screen.dart';

@@ -4,8 +4,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/song_model.dart';
+import '../models/user_model.dart';
 
 class AddSongForm extends StatefulWidget {
   @override
@@ -16,6 +19,9 @@ class _AddSongFormState extends State<AddSongForm> {
   String? filePath;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  late String _id;
+
+  String get id => _id;
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -68,6 +74,21 @@ class _AddSongFormState extends State<AddSongForm> {
         content: Text('Veuillez entrer une description pour la chanson.'),
       ));
     } else {
+      // Créer une nouvelle instance de la classe Song avec les informations entrées par l'utilisateur.
+      Song newSong = Song(
+        id: id,
+        title: titleController.text,
+        description: descriptionController.text,
+        url: filePath!,
+        coverUrl: 'assets/images/default_cover.jpg',
+        like: 0,
+        dislike: 0,
+        superlike: 0,
+      );
+
+      // Ajouter la nouvelle chanson à la liste des chansons.
+      Song.songs.add(newSong);
+
       // Afficher un aperçu des informations de la chanson.
       showDialog(
         context: context,
@@ -102,6 +123,7 @@ class _AddSongFormState extends State<AddSongForm> {
                     // Ajouter la chanson à la liste des chansons et fermer le formulaire.
                     Song.songs.add(
                       Song(
+                        id: id,
                         title: titleController.text,
                         description: descriptionController.text,
                         url: filePath!,
@@ -126,13 +148,18 @@ class _AddSongFormState extends State<AddSongForm> {
 
   @override
   Widget build(BuildContext context) {
+    final userModel = Provider.of<UserModel>(context);
+    final loggedInUsername = userModel.loggedInUsername;
+    Uuid uuid = Uuid();
+    String id = uuid.v4();
     return Container(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.deepPurple,
           elevation: 0,
           title: Text(
             'Ajouter une musique',
+            style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           titleTextStyle: TextStyle(color: Colors.black),
         ),
@@ -149,6 +176,10 @@ class _AddSongFormState extends State<AddSongForm> {
                       onPressed: _pickFile,
                       icon: Icon(Icons.music_note),
                       label: Text('Choisir une musique'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.deepPurple),
+                      ),
                     ),
                     SizedBox(height: 16.0),
                     TextField(
@@ -166,10 +197,22 @@ class _AddSongFormState extends State<AddSongForm> {
                       ),
                       style: TextStyle(color: Colors.black),
                     ),
+                    TextFormField(
+                      initialValue: '$loggedInUsername',
+                      enabled: false,
+                      decoration: InputDecoration(
+                          labelText: "Username : ",
+                          labelStyle: TextStyle(color: Colors.black)),
+                      style: TextStyle(color: Colors.white),
+                    ),
                     SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: _addSong,
                       child: Text('Ajouter la musique'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.deepPurple),
+                      ),
                     ),
                   ],
                 ),
