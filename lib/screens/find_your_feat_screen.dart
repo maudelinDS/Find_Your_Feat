@@ -151,14 +151,6 @@ class _FindYourFeatScreenState extends State<FindYourFeatScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  Song.songs[currentSongIndex].username,
-                  style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
                 const SizedBox(height: 80),
                 Container(
                   margin: const EdgeInsets.only(left: 20.0, right: 20.0),
