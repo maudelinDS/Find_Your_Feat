@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/song_model.dart';
 import '../models/user_model.dart';
@@ -19,7 +18,7 @@ class _AddSongFormState extends State<AddSongForm> {
   String? filePath;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  late String _id;
+  late String _id = '';
 
   String get id => _id;
 
@@ -58,6 +57,9 @@ class _AddSongFormState extends State<AddSongForm> {
   }
 
   void _addSong() {
+    final userModel = Provider.of<UserModel>(context, listen: false);
+    final loggedInUsername = userModel.loggedInUsername;
+
     if (filePath == null) {
       // Afficher un message d'erreur si aucun fichier audio n'a été sélectionné.
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -84,6 +86,7 @@ class _AddSongFormState extends State<AddSongForm> {
         like: 0,
         dislike: 0,
         superlike: 0,
+        username: loggedInUsername!,
       );
 
       // Ajouter la nouvelle chanson à la liste des chansons.
@@ -117,6 +120,10 @@ class _AddSongFormState extends State<AddSongForm> {
                   'Fichier audio: $filePath',
                   style: TextStyle(fontSize: 20.0, color: Colors.black),
                 ),
+                Text(
+                  'Add by: $loggedInUsername',
+                  style: TextStyle(fontSize: 20.0, color: Colors.black),
+                ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
@@ -131,12 +138,19 @@ class _AddSongFormState extends State<AddSongForm> {
                         like: 0,
                         dislike: 0,
                         superlike: 0,
+                        username: loggedInUsername!,
                       ),
                     );
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
                   child: Text('Ajouter la musique'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Retour'),
                 ),
               ],
             ),
@@ -150,8 +164,7 @@ class _AddSongFormState extends State<AddSongForm> {
   Widget build(BuildContext context) {
     final userModel = Provider.of<UserModel>(context);
     final loggedInUsername = userModel.loggedInUsername;
-    Uuid uuid = Uuid();
-    String id = uuid.v4();
+
     return Container(
       child: Scaffold(
         appBar: AppBar(
@@ -189,7 +202,7 @@ class _AddSongFormState extends State<AddSongForm> {
                       ),
                       style: TextStyle(color: Colors.black),
                     ),
-                    SizedBox(height: 16.0),
+                    SizedBox(height: 30.0),
                     TextField(
                       controller: descriptionController,
                       decoration: InputDecoration(

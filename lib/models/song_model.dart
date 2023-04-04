@@ -7,6 +7,7 @@ class Song {
   int like;
   int dislike;
   int superlike;
+  final String username;
 
   Song({
     required this.id,
@@ -17,6 +18,7 @@ class Song {
     required this.like,
     required this.dislike,
     required this.superlike,
+    required this.username,
   });
 
   static List<Song> songs = [
@@ -29,6 +31,7 @@ class Song {
       like: 0,
       dislike: 0,
       superlike: 0,
+      username: '',
     ),
     Song(
       id: '2',
@@ -40,6 +43,7 @@ class Song {
       like: 0,
       dislike: 0,
       superlike: 0,
+      username: '',
     ),
     Song(
       id: '3',
@@ -50,6 +54,7 @@ class Song {
       like: 0,
       dislike: 0,
       superlike: 0,
+      username: '',
     ),
     Song(
       id: '4',
@@ -60,6 +65,7 @@ class Song {
       like: 0,
       dislike: 0,
       superlike: 0,
+      username: '',
     ),
   ];
 }
