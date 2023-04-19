@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
               displayColor: Colors.white,
             ),
       ),
-      home: LoginPage(),
+      home: HomeScreen(),
       getPages: [
         GetPage(name: '/home', page: () => const HomeScreen()),
         GetPage(name: '/song', page: () => const SongScreen()),

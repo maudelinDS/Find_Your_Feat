@@ -37,6 +37,19 @@ class _AddSongFormState extends State<AddSongForm> {
     }
   }
 
+  void _saveSongInfo(Song song) async {
+    final Directory? appDir = await getApplicationDocumentsDirectory();
+    if (appDir == null) {
+      return;
+    }
+    final File file = File('${appDir.path}/songs.txt');
+    final String songInfo =
+        '${song.id},${song.title},${song.description},${song.url},${song.coverUrl},${song.like},${song.dislike},${song.superlike},${song.username}';
+    await file.writeAsString('$songInfo\n', mode: FileMode.append);
+    print(songInfo);
+    print(file);
+  }
+
   // copier la musique ajouter par l'utilisateur
   // le répertoire de stockage de l'application en utilisant la méthode getApplicationDocumentsDirectory()
   // a bibliothèque path pour extraire le nom du fichier audio à partir de son chemin source,
@@ -54,6 +67,26 @@ class _AddSongFormState extends State<AddSongForm> {
     print(destFile);
     await sourceFile.copy(destFilePath);
     return destFile.path;
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/songs.txt');
+  }
+
+  Future<String> readFile() async {
+    try {
+      final file = await _localFile;
+      String contents = await file.readAsString();
+      return contents;
+    } catch (e) {
+      return "Error: $e";
+    }
   }
 
   void _addSong() {
@@ -90,69 +123,73 @@ class _AddSongFormState extends State<AddSongForm> {
       );
 
       // Ajouter la nouvelle chanson à la liste des chansons.
-      Song.songs.add(newSong);
+      // Enregistrer les informations de la chanson dans un fichier.
 
+      _saveSongInfo(newSong);
       // Afficher un aperçu des informations de la chanson.
       showDialog(
         context: context,
-        builder: (_) => Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Aperçu',
-              style: TextStyle(color: Colors.red),
+        builder: (_) => Container(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.deepPurple,
+              title: Text(
+                'Aperçu',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Titre: ${titleController.text}',
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                  'Description: ${descriptionController.text}',
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                  'Fichier audio: $filePath',
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                ),
-                Text(
-                  'Add by: $loggedInUsername',
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
-                ),
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    // Ajouter la chanson à la liste des chansons et fermer le formulaire.
-                    Song.songs.add(
-                      Song(
-                        id: id,
-                        title: titleController.text,
-                        description: descriptionController.text,
-                        url: filePath!,
-                        coverUrl: 'assets/images/default-cover.jpg',
-                        like: 0,
-                        dislike: 0,
-                        superlike: 0,
-                        username: loggedInUsername!,
-                      ),
-                    );
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: Text('Ajouter la musique'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Retour'),
-                ),
-              ],
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Titre: ${titleController.text}',
+                    style: TextStyle(fontSize: 20.0, color: Colors.black),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Description: ${descriptionController.text}',
+                    style: TextStyle(fontSize: 20.0, color: Colors.black),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Fichier audio: $filePath',
+                    style: TextStyle(fontSize: 20.0, color: Colors.black),
+                  ),
+                  Text(
+                    'Add by: $loggedInUsername',
+                    style: TextStyle(fontSize: 20.0, color: Colors.black),
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Ajouter la chanson à la liste des chansons et fermer le formulaire.
+                      Song.songs.add(
+                        Song(
+                          id: id,
+                          title: titleController.text,
+                          description: descriptionController.text,
+                          url: filePath!,
+                          coverUrl: 'assets/images/default-cover.jpg',
+                          like: 0,
+                          dislike: 0,
+                          superlike: 0,
+                          username: loggedInUsername!,
+                        ),
+                      );
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Ajouter la musique'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Retour'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

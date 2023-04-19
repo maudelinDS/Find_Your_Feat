@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:my_app/models/song_model.dart';
 import 'package:my_app/widgets/widgets.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
 
 class SongScreen extends StatefulWidget {
@@ -19,8 +20,12 @@ class _SongScreenState extends State<SongScreen> {
   @override
   void initState() {
     super.initState();
+    _askStoragePermission();
+    _initAudioPlayer();
+  }
 
-    audioPlayer.setAudioSource(
+  void _initAudioPlayer() async {
+    await audioPlayer.setAudioSource(
       ConcatenatingAudioSource(
         children: [
           AudioSource.uri(
@@ -29,6 +34,32 @@ class _SongScreenState extends State<SongScreen> {
         ],
       ),
     );
+    await audioPlayer.load();
+  }
+
+  void _askStoragePermission() async {
+    if (await Permission.storage.request().isGranted) {
+      print("permission accorded");
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Autorisation de stockage externe'),
+          content: const Text(
+              'Cette application a besoin d\'accéder à votre stockage externe pour lire les fichiers audio.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () => openAppSettings(),
+              child: const Text('Paramètres'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -66,6 +97,7 @@ class _SongScreenState extends State<SongScreen> {
             song: song,
             seekBarDataStream: _seekBarDataStream,
             audioPlayer: audioPlayer,
+            playerButtons: PlayerButtons(audioPlayer: audioPlayer),
           ),
         ],
       ),
@@ -79,11 +111,13 @@ class _MusicPlayer extends StatelessWidget {
     required this.song,
     required Stream<SeekBarData> seekBarDataStream,
     required this.audioPlayer,
+    required this.playerButtons,
   })  : _seekBarDataStream = seekBarDataStream,
         super(key: key);
   final Song song;
   final Stream<SeekBarData> _seekBarDataStream;
   final AudioPlayer audioPlayer;
+  final Widget playerButtons;
 
   @override
   Widget build(BuildContext context) {

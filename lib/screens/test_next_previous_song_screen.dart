@@ -61,13 +61,11 @@ class _TestTEsState extends State<TestTEs> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               child: Image.asset(
                 Song.songs[currentSongIndex].coverUrl,
                 fit: BoxFit.fitWidth,
+                height: 100,
               ),
             ),
             const SizedBox(height: 6),
@@ -93,7 +91,7 @@ class _TestTEsState extends State<TestTEs> {
                 IconButton(
                   onPressed: playPreviousSong,
                   icon: const Icon(
-                    Icons.thumb_down,
+                    Icons.skip_previous,
                   ),
                 ),
                 IconButton(
@@ -110,7 +108,7 @@ class _TestTEsState extends State<TestTEs> {
                 IconButton(
                   onPressed: playNextSong,
                   icon: const Icon(
-                    Icons.thumb_up,
+                    Icons.skip_next,
                     color: Colors.blue,
                   ),
                 ),

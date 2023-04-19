@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
-class PlayerButtons extends StatelessWidget {
+import '../models/song_model.dart';
+
+class PlayerButtons extends StatefulWidget {
   const PlayerButtons({
     Key? key,
     required this.audioPlayer,
@@ -9,13 +11,37 @@ class PlayerButtons extends StatelessWidget {
 
   final AudioPlayer audioPlayer;
 
+  @override
+  _PlayerButtonsState createState() => _PlayerButtonsState();
+}
+
+class _PlayerButtonsState extends State<PlayerButtons> {
+  late int _currentSongIndex;
+  late Song _currentSong;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentSongIndex = 0;
+    _currentSong = Song.songs[_currentSongIndex];
+  }
+
   Future<void> _playNext() async {
-    print('click');
-    await audioPlayer.seekToNext();
+    setState(() {
+      _currentSongIndex = (_currentSongIndex + 1) % Song.songs.length;
+      _currentSong = Song.songs[_currentSongIndex];
+    });
+    await widget.audioPlayer.setUrl(_currentSong.url);
+    await widget.audioPlayer.play();
   }
 
   Future<void> _playPrevious() async {
-    await audioPlayer.seekToPrevious();
+    setState(() {
+      (_currentSongIndex - 1 + Song.songs.length) % Song.songs.length;
+      _currentSong = Song.songs[_currentSongIndex];
+    });
+    await widget.audioPlayer.setUrl(_currentSong.url);
+    await widget.audioPlayer.play();
   }
 
   @override
@@ -23,21 +49,16 @@ class PlayerButtons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        StreamBuilder<SequenceState?>(
-          stream: audioPlayer.sequenceStateStream,
-          builder: (context, index) {
-            return IconButton(
-              iconSize: 35,
-              onPressed: _playPrevious,
-              icon: const Icon(
-                Icons.skip_previous,
-                color: Colors.white,
-              ),
-            );
-          },
+        IconButton(
+          iconSize: 35,
+          onPressed: _playPrevious,
+          icon: const Icon(
+            Icons.skip_previous,
+            color: Colors.white,
+          ),
         ),
         StreamBuilder<PlayerState>(
-          stream: audioPlayer.playerStateStream,
+          stream: widget.audioPlayer.playerStateStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final playerState = snapshot.data;
@@ -51,9 +72,13 @@ class PlayerButtons extends StatelessWidget {
                   margin: const EdgeInsets.all(10.0),
                   child: const CircularProgressIndicator(),
                 );
-              } else if (!audioPlayer.playing) {
+              } else if (!widget.audioPlayer.playing) {
                 return IconButton(
-                  onPressed: audioPlayer.play,
+                  onPressed: () async {
+                    await widget.audioPlayer
+                        .setUrl(Song.songs[_currentSongIndex].url);
+                    await widget.audioPlayer.play();
+                  },
                   iconSize: 75,
                   icon: const Icon(
                     Icons.play_circle,
@@ -67,7 +92,9 @@ class PlayerButtons extends StatelessWidget {
                     color: Colors.white,
                   ),
                   iconSize: 75.0,
-                  onPressed: audioPlayer.pause,
+                  onPressed: () {
+                    widget.audioPlayer.pause();
+                  },
                 );
               } else {
                 return IconButton(
@@ -76,9 +103,9 @@ class PlayerButtons extends StatelessWidget {
                     color: Colors.white,
                   ),
                   iconSize: 75.0,
-                  onPressed: () => audioPlayer.seek(
+                  onPressed: () => widget.audioPlayer.seek(
                     Duration.zero,
-                    index: audioPlayer.effectiveIndices!.first,
+                    index: widget.audioPlayer.effectiveIndices!.first,
                   ),
                 );
               }
@@ -87,18 +114,13 @@ class PlayerButtons extends StatelessWidget {
             }
           },
         ),
-        StreamBuilder<SequenceState?>(
-          stream: audioPlayer.sequenceStateStream,
-          builder: (context, index) {
-            return IconButton(
-              iconSize: 35,
-              onPressed: _playNext,
-              icon: const Icon(
-                Icons.skip_next,
-                color: Colors.white,
-              ),
-            );
-          },
+        IconButton(
+          iconSize: 35,
+          onPressed: _playNext,
+          icon: const Icon(
+            Icons.skip_next,
+            color: Colors.white,
+          ),
         ),
       ],
     );
